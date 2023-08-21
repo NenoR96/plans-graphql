@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { GraphQLObjectType, GraphQLInt, GraphQLList, GraphQLString, GraphQLSchema } from 'graphql';
-import { PriceFeatureTypeInput, CategoryTypeInput } from './inputs';
-import { PlanType, PriceFeatureType } from './models';
+import { PriceFeatureTypeInput, CategoryTypeInput, PriceTypeInput } from './inputs';
+import { FeatureType, PlanType, PriceFeatureType } from './models';
 
 const API_URL = 'http://localhost:8081/';
 
@@ -22,12 +22,13 @@ const RootQuery = new GraphQLObjectType({
                     query = `?id=${id}`
                 }
                 return fetch(API_URL + 'plans' + query).then(res => res.json()).then(res => {
+                    console.dir(res, {depth: null})
                     return res;
                 }).catch(err => console.error(err));
             }
         },
         getFeatures: {
-            type: new GraphQLList(PriceFeatureType),
+            type: new GraphQLList(FeatureType),
             args: { id: { type: GraphQLInt }, limit: { type: GraphQLInt }, skip: { type: GraphQLInt } },
             resolve(parent, { id, limit, skip }) {
                 if (id && (limit || skip)) {
@@ -45,7 +46,7 @@ const RootQuery = new GraphQLObjectType({
             }
         },
         searchFeatures: {
-            type: new GraphQLList(PriceFeatureType),
+            type: new GraphQLList(FeatureType),
             args: {
                 text: { type: GraphQLString },
                 limit: { type: GraphQLInt },
@@ -74,14 +75,12 @@ const Mutation = new GraphQLObjectType({
             type: PlanType,
             args: {
                 title: { type: GraphQLString },
-                prices: { type: GraphQLList(PriceFeatureTypeInput) },
-                categories: { type: GraphQLList(CategoryTypeInput) }
+                prices: { type: GraphQLList(PriceTypeInput) },
             },
             resolve(parent, args) {
                 let plan = {
                     title: args.title,
                     prices: args.prices ?? [],
-                    categories: args.categories ?? []
                 }
                 console.dir(plan, { depth: null })
                 return fetch(API_URL + 'plans', {
@@ -96,7 +95,6 @@ const Mutation = new GraphQLObjectType({
                 }).catch(err => console.error(err));
             }
         },
-
     }
 });
 

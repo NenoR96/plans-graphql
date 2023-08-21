@@ -1,21 +1,24 @@
-import { GraphQLInt, GraphQLString, GraphQLInputObjectType } from 'graphql';
+import { GraphQLInt, GraphQLString, GraphQLInputObjectType, GraphQLList } from 'graphql';
 
-export const PriceTypeInput = new GraphQLInputObjectType({
+export const PriceTypeInput: any = new GraphQLInputObjectType({
     name: 'PriceInput',
-    fields: {
+    fields: () => ({
         id: { type: GraphQLInt },
         price: { type: GraphQLInt },
         market: { type: GraphQLString },
         type: { type: GraphQLString },
-    }
+        priceFeature: { type: PriceFeatureTypeInput },
+    })
 });
 
 export const FeatureTypeInput = new GraphQLInputObjectType({
     name: 'FeatureInput',
-    fields: {
+    fields: () => ({
         id: { type: GraphQLInt },
-        title: { type: GraphQLString }
-    }
+        title: { type: GraphQLString },
+        categories: { type: new GraphQLList(CategoryTypeInput) }
+
+    })
 });
 
 export const PriceFeatureTypeInput = new GraphQLInputObjectType({
@@ -24,10 +27,7 @@ export const PriceFeatureTypeInput = new GraphQLInputObjectType({
         id: { type: GraphQLInt },
         displayPriority: { type: GraphQLInt },
         allowance: { type: GraphQLInt },
-        price: { type: PriceTypeInput },
-        priceId: { type: GraphQLInt },
-        feature: { type: FeatureTypeInput },
-        featureId: { type: GraphQLInt }
+        features: { type: new GraphQLList(FeatureTypeInput) }
     }
 });
 

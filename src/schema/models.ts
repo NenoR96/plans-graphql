@@ -1,21 +1,38 @@
 import { GraphQLObjectType, GraphQLInt, GraphQLList, GraphQLString } from 'graphql';
 
-export const PriceType = new GraphQLObjectType({
+export const PriceType: any = new GraphQLObjectType({
     name: 'Price',
-    fields: {
+    fields: () => ({
         id: { type: GraphQLInt },
         price: { type: GraphQLInt },
         market: { type: GraphQLString },
         type: { type: GraphQLString },
-    }
+        plan: { type: PlanType },
+        planId: { type: GraphQLInt },
+        priceFeature: { type: PriceFeatureType },
+        priceFeatureId: { type: GraphQLInt },
+    })
 });
 
-export const FeatureType = new GraphQLObjectType({
-    name: 'Feature',
-    fields: {
+export const CategoryType = new GraphQLObjectType({
+    name: 'Category',
+    fields: () => ({
         id: { type: GraphQLInt },
-        title: { type: GraphQLString }
-    }
+        title: { type: GraphQLString },
+        feature: { type: FeatureType },
+        featureId: { type: GraphQLInt }
+    })
+});
+
+export const FeatureType: any = new GraphQLObjectType({
+    name: 'Feature',
+    fields: () => ({
+        id: { type: GraphQLInt },
+        title: { type: GraphQLString },
+        priceFeature: { type: PriceFeatureType },
+        priceFeatureId: { type: GraphQLInt },
+        categories: { type: new GraphQLList(CategoryType) }
+    })
 });
 
 export const PriceFeatureType = new GraphQLObjectType({
@@ -25,28 +42,15 @@ export const PriceFeatureType = new GraphQLObjectType({
         displayPriority: { type: GraphQLInt },
         allowance: { type: GraphQLInt },
         price: { type: PriceType },
-        priceId: { type: GraphQLInt },
-        feature: { type: FeatureType },
-        featureId: { type: GraphQLInt },
-        plan: { type: PlanType },
-        planId: { type: GraphQLInt }
+        features: { type: new GraphQLList(FeatureType) }
     })
 });
 
-export const CategoryType = new GraphQLObjectType({
-    name: 'Category',
-    fields: {
-        id: { type: GraphQLInt },
-        title: { type: GraphQLString },
-    }
-});
-
-export const PlanType:any = new GraphQLObjectType({
+export const PlanType: any = new GraphQLObjectType({
     name: 'Plan',
     fields: {
         id: { type: GraphQLString },
         title: { type: GraphQLString },
-        prices: { type: new GraphQLList(PriceFeatureType) },
-        categories: { type: new GraphQLList(CategoryType) }
+        prices: { type: new GraphQLList(PriceType) },
     }
 });
